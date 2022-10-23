@@ -1,1 +1,5 @@
 # -LFP-P2_201902278
+Nombre: Kevin Estuardo Palacios Quiñonez
+Carnet: 201902278
+Curso:LABORATORIO LENGUAJES FORMALES Y DE PROGRAMACION
+Sección: B+

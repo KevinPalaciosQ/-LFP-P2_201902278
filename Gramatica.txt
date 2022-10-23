@@ -1,0 +1,74 @@
+================================
+================================
+            TOKENS
+
+'Controles'        : 'RCONTROLES',
+'Propiedades'      : 'RPROPIEDADES',
+'Colocacion'       : 'RCOLOCACION',
+'Etiqueta'         : 'RETIQUETA',
+'Boton'            : 'RBOTON',
+'Check'            : 'RCHECK',
+'RadioButton'      : 'RRADIOBUTTON',
+'Texto'            : 'RTEXTO',
+'AreaTexto'        : 'RAREATEXTO',
+'Clave'             : 'RCLAVE',
+'Contenedor'        : 'RCONTENEDOR'
+
+t_EXCLAMACION = r'!'
+t_LLAA        = r'<'
+t_LLAC        = r'>'
+t_GUION       = r'-'
+t_PTCOMA      = r';'
+t_PUNTO       = r'\.'
+t_PARA        = r'\('
+t_PARC        = r'\)'
+t_COMA        = r','
+
+=======================================
+=======================================
+            GRAMATICA
+
+SIMBOLO INICIAL => init
+TERMINALES => ENTERO, DECIMAL, CADENA, ID
+NO TERMINALES => TODOS LOS DEMAS QUE APARECEN XD
+
+PRODUCCIONES => 
+
+init : instrucciones
+
+instrucciones    : instrucciones instruccion
+
+instrucciones : instruccion
+
+instruccion : LLAA EXCLAMACION GUION GUION RCONTROLES controles RCONTROLES GUION GUION LLAC
+                    | LLAA EXCLAMACION GUION GUION RPROPIEDADES propiedades RPROPIEDADES GUION GUION LLAC
+
+controles    : controles control
+
+controles : control
+
+control : RETIQUETA ID PTCOMA
+                | RBOTON ID PTCOMA
+                | RCHECK ID PTCOMA
+                | RRADIOBUTTON ID PTCOMA
+                | RTEXTO ID PTCOMA
+                | RAREATEXTO ID PTCOMA
+                | RCLAVE ID PTCOMA
+                | RCONTENEDOR ID PTCOMA
+
+propiedades    : propiedades propiedad
+
+propiedades : propiedad
+
+propiedad : ID PUNTO ID PARA parametros PARC PTCOMA
+
+parametros : parametros COMA parametro
+
+parametros : parametro
+
+parametro : expresion
+
+expresion : ENTERO
+                | DECIMAL
+                | CADENA
+                | ID
