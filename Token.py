@@ -1,11 +1,16 @@
 #CLASE TOKEN
 class Token:
-    def __init__(self,lexema,tipo,linea,columna):
+    def __init__(self, lexema,token, linea, columna):
         self.lexema=lexema
-        self.tipo=tipo
+        self.token=token
+        #self.patron=patron
         self.linea=linea
         self.columna=columna
-#CLASE ERROR
-class Error:
-    def __init__(self):
-        pass
+    def ver(self):
+        print("\n***********************************")
+        print("Lexema: "+self.lexema)#Reporte de Tokens
+        print("Token: "+self.token)
+        #print("Patron:" +self.patron)
+        print("Linea: "+str(self.linea))
+        print("Columna: "+str(self.columna))
+        print("\n***********************************")

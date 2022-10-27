@@ -11,6 +11,11 @@ from tkinter import ttk
 from click import command
 import pyautogui as pt 
 import webbrowser as wb
+from AnalizadorLexico import *
+from AnalizadorPrueba import *
+from ReporteTokens import *
+from ReporteErrores import *
+from Analizador3 import *
 ventanaprincipal = None
 textbox = None
 RutaArchivo=None
@@ -19,6 +24,7 @@ VentanaAyuda=None
 lblposicionx=None
 lblposiciony=None
 ruta=None
+hola = ""
 def ManualTecnico():
     wb.open_new(r"C:\Users\kevin\OneDrive\Documentos\-LFP-P2_201902278\Documentacion\ManualTecnicoProyecto2.pdf")
 def ManualDeUsuario():
@@ -33,13 +39,25 @@ def posiciones():
         x , y= pt.position()
         lblposicionx.configure(text=+x)
         lblposiciony.configure(text=+y)
-        #print(x,y)
-#def PantallaCompleta():
-    #global ventanaprincipal
-    #ventanaprincipal.resizable(True, True)
-
 def Ejecutar():
-    pass
+    global hola
+    hola=analizador_lexico()
+    hola.analizar(textbox.get(1.0, END))
+    hola.impresion()
+def Tokens():
+    global hola
+    try:
+        GenerarArchivoDeTokens(hola.ListaTokens)
+        messagebox.showinfo("Succes","Se Generó el Reporte de Tokens")
+    except:
+        messagebox.showwarning("Advertencia","No se pudo Generar el Reporte de Tokens, por favor analice el Archivo")
+def Errores():
+    global hola
+    try:
+        GenerarArchivoDeErrores(hola.ListaErrores)
+        messagebox.showinfo("Succes","Se Generó el Reporte de Errores")
+    except:
+        messagebox.showwarning("Advertencia","No se pudo Generar el Reporte de Errores, por favor analice el Archivo")
 def View():
     messagebox.showinfo("Succes","Por favor tomese su tiempo para poder familiarizarse con el programa :)")
 def Regresar():
@@ -75,7 +93,7 @@ def GuardarComo():
     global textbox
     global ruta
     try:
-        ruta = filedialog.asksaveasfile(title="Guardar Archivo", filetypes = (("Text files", "*.lfp*"), ("all files", "*.*")))
+        ruta = filedialog.asksaveasfile(title="Guardar Archivo", filetypes = (("Text files", "*.gpw*"), ("all files", "*.*")))
         if ruta:
             MiTexto = textbox.get(1.0,END)
             ruta.write(MiTexto)
@@ -112,7 +130,7 @@ def Abrir():
     global RutaArchivo
     global lblespacio
     try:
-        RutaArchivo = filedialog.askopenfilename(title="Cargar Archivo", filetypes = (("Text files", "*.lfp*"), ("all files", "*.*")))
+        RutaArchivo = filedialog.askopenfilename(title="Cargar Archivo", filetypes = (("Text files", "*.gpw*"), ("all files", "*.*")))
         ruta2 = open(RutaArchivo,"r",encoding="utf-8")
         material = ruta2.read()
         print(material)
@@ -179,8 +197,8 @@ def VentanaPrincipal():
     View_menu.add_command(label="Vista", command=View)
     #ITEMS DEL MENU TOOL
     Tool_menu.add_command(label="Temas de Ayuda", command=Ayuda)
-    Tool_menu.add_command(label="Reporte de Tokens")
-    Tool_menu.add_command(label="Reporte de Errores")
+    Tool_menu.add_command(label="Reporte de Tokens", command=Tokens)
+    Tool_menu.add_command(label="Reporte de Errores", command=Errores)
     #ITEMS DEL MENU WINDOWS
     Windows_menu.add_command(label="Windows", command=Windows)
     #AÑADIR ITEMS A LA BARRA

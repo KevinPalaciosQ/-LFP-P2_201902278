@@ -1,9 +1,12 @@
+from pydoc import text
+from re import A
 from Token import *
 from Error import *
-class Analizador():
+class Analizadorr:
     def __init__(self):
-        self.ListaTokens=[]
-        self.ListaErrores=[]
+        self.ListaTokens = []
+        self.ListaErrores = []
+
     #Método para reconocer decimales
     def AutomataFinitoDecimal(self, caracter):
         Estado_aceptacion = [2]
@@ -29,17 +32,18 @@ class Analizador():
             elif MiEstado ==-1:
                 return False
         return MiEstado in Estado_aceptacion
-    def AnalisisLexico(self,dato):
-        self.ListaTokens=[]
-        self.ListaErrores=[]
+
+    def AnalisisLexico1(self, dato):
+        self.ListaTokens = []
+        self.ListaErrores = []
         contador = 0
         linea = 1
         columna = 1
-        lector = ""
-        estado = "S0"#ESTADO INICIAL PARA PALABRAS RESERVADAS
+        lector = ""#buffer
+        estado="S0"#ESTADO INICIAL PARA PALABRAS RESERVADAS
         while contador<len(dato):
             abc=dato[contador]
-            #INICIO ESTADO S0 PARA TOKENS
+            #INICIO ESTADO S0-------TOKENS
             if estado == "S0":
                 if (abc == "!"):
                     lector=abc
@@ -113,10 +117,10 @@ class Analizador():
                 else:
                     self.ListaErrores.append(Error(lector,"Error",linea,columna))
                     lector=""
-                    columna+=1     
-            #INICIO ESTADO S1        
-            elif estado=="S1":
-                if (abc.isalpha())  and (not abc.isdigit()):
+                    columna+=1
+            #INICIO ESTADO S1
+            elif estado == "S1" :#PUEDEN VENIR LETRAS O NUMEROS O ALGUN ASCII
+                if (abc.isalpha()):
                     lector+=abc
                     columna+=1
                     estado="S1"
@@ -255,8 +259,50 @@ class Analizador():
                         self.ListaTokens.append(Token(lector,"false","T_FALSE",linea,columna))
                         lector=""
                         estado="S0"
-                        contador-=1                                                               
-            contador+=1                          
+                        contador-=1  
+                    else:
+                        self.ListaErrores.append(Error(lector,"Error",linea,columna))
+                        lector=""
+                        columna+=1
+            #INICIO ESTADO S2     
+            elif estado == "S2":#Numeros
+                if abc.isdigit():
+                    lector+=abc
+                    columna+=1
+                    estado="S2"
+                elif abc == ".":
+                    lector+=abc
+                    columna+=1
+                    estado="S2"
+                else:
+                    if self.AutomataFinitoDecimal(abc):
+                        self.ListaTokens.append(Token(lector,"Double","\d\d*\.\d\d*",linea,columna))
+                    else:
+                        self.ListaTokens.append(Token(lector,"Entero","\d\d*",linea,columna))
+                    lector = ""
+                    contador -= 1
+                    estado = "S0"
+            #INICIO ESTADO S3
+            elif estado == "S3":#CONTENIDO ENTRE ABREVIATURAS
+                if abc != "<":
+                    lector += abc
+                    columna += 1
+                    estado = "S3"
+
+                elif abc == "\n":
+                    lector += abc
+                    linea += 1
+                    columna = 1
+                    estado = "S3"
+
+                else:
+                    self.ListaTokens.append(Token(lector, "cadena", ".[^<]", linea, columna))
+                    lector = ""
+                    estado = "S0"
+                    contador -= 1
+
+            contador+=1
+
     def impresion(self):
         print("TOKENS: ")
         for Tokkens in self.ListaTokens:
