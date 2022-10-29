@@ -1,7 +1,6 @@
 from ast import Delete
 import tkinter
 from tkinter import *
-from tkinter import font 
 from tkinter import ttk,  scrolledtext
 import tkinter as ttk
 from tkinter import filedialog
@@ -11,11 +10,10 @@ from tkinter import ttk
 from click import command
 import pyautogui as pt 
 import webbrowser as wb
-from AnalizadorLexico import *
-from AnalizadorPrueba import *
 from ReporteTokens import *
 from ReporteErrores import *
-from Analizador3 import *
+from AnalizadorLexico import *
+from Error import *
 ventanaprincipal = None
 textbox = None
 RutaArchivo=None
@@ -25,13 +23,14 @@ lblposicionx=None
 lblposiciony=None
 ruta=None
 hola = ""
+tv=None
+LE=[]
 def ManualTecnico():
     wb.open_new(r"C:\Users\kevin\OneDrive\Documentos\-LFP-P2_201902278\Documentacion\ManualTecnicoProyecto2.pdf")
 def ManualDeUsuario():
     wb.open_new(r"C:\Users\kevin\OneDrive\Documentos\-LFP-P2_201902278\Documentacion\ManualUsuarioProyecto2.pdf")
 def posiciones():
     global x,y
-
     global textbox
     global lblposicionx
     global lblposiciony
@@ -41,9 +40,18 @@ def posiciones():
         lblposiciony.configure(text=+y)
 def Ejecutar():
     global hola
+    global textbox
+    global LE
+    global tv
     hola=analizador_lexico()
     hola.analizar(textbox.get(1.0, END))
-    hola.impresion()
+    LE=hola.ListaErrores
+    arreglo=[]
+    for e in LE:
+        arreglo.append((e.tipo,e.linea," ",e.lexema))
+    for ee in arreglo:
+        tv.insert("",tk.END,values=ee)
+    messagebox.showinfo("Succes","Se Compilo con Éxito el programa")
 def Tokens():
     global hola
     try:
@@ -122,8 +130,7 @@ def Nuevo():
             messagebox.showinfo("Succes","Se creó un nuevo documento ")
         else:
             messagebox.showwarning("Advertencia","No se creó nuevo documento")
-    elif textbox != "":
-        print("hola")
+
 def Abrir():
     global textbox
     global material
@@ -145,8 +152,10 @@ def VentanaPrincipal():
     global lblespacio
     global lblposicionx
     global lblposiciony
+    global LE
+    global tv
     ventanaprincipal = tkinter.Tk()
-    ventanaprincipal.title("Kevin IDE")
+    ventanaprincipal.title("Web Creator IDE")
     ventanaprincipal.geometry("900x900")
     ventanaprincipal.config(bg="SlateGray3")
     ventanaprincipal.resizable(0,0)
@@ -166,7 +175,7 @@ def VentanaPrincipal():
     tv.heading("col0", text="Tipo de Error", anchor=CENTER)
     tv.heading("col1", text="Línea en que se encuentra", anchor=CENTER)
     tv.heading("col2", text="Se esperaba", anchor=CENTER)
-    tv.heading("col3", text="Descripción de Error", anchor=NW)
+    tv.heading("col3", text="Descripción de Error", anchor=CENTER)
     tv.pack()
     tv.place(x=0,y=665)
     #MENU
@@ -248,10 +257,9 @@ def VentanaPrincipal():
     boton4 = Button(ventanaprincipal,text="Contar", image=photo4, height=20, width=20)
     boton4.place(x=201,y=0)
     photo5 = PhotoImage(file = r"C:\Users\kevin\OneDrive\Documentos\-LFP-P2_201902278\help.png")
-    boton5 = Button(ventanaprincipal,text="Contar", image=photo5, height=20, width=20)
+    boton5 = Button(ventanaprincipal,text="Contar", image=photo5, height=20, width=20, command=ManualTecnico)
     boton5.place(x=228,y=0)
 
     ventanaprincipal.mainloop()
-    #posiciones()
 
 VentanaPrincipal()
